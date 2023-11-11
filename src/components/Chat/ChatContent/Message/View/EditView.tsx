@@ -24,7 +24,6 @@ const EditView = ({
   const inputRole = useStore((state) => state.inputRole);
   const setChats = useStore((state) => state.setChats);
   const currentChatIndex = useStore((state) => state.currentChatIndex);
-
   const [_content, _setContent] = useState<string>(content);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const textareaRef = React.createRef<HTMLTextAreaElement>();
@@ -34,6 +33,24 @@ const EditView = ({
   const resetTextAreaHeight = () => {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
+
+  const handleGenerateAutomatically = () => {
+    if (_content) {
+      handleGenerate(); // assuming handleGenerate is the function tied to your generate button
+    }
+  };
+
+  useEffect(() => {
+    // Only update _content if it's initially empty
+    if (!_content) {
+      const queryParams = new URLSearchParams(window.location.search);
+      const urlPrompt = queryParams.get('prompt');
+      if (urlPrompt) {
+        _setContent(decodeURIComponent(urlPrompt));
+        handleGenerateAutomatically();
+      }
+    }
+  }, []); // This effect runs only once when the component mounts
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const isMobile =
