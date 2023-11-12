@@ -44,7 +44,7 @@ const EditView = ({
     // Only update _content if it's initially empty
     if (!_content) {
       const queryParams = new URLSearchParams(window.location.search);
-      const urlPrompt = queryParams.get('prompt');
+      const urlPrompt = queryParams.get('prompt').replace(/\+/g, ' ');
       if (urlPrompt) {
         _setContent(decodeURIComponent(urlPrompt));
         handleGenerateAutomatically();
