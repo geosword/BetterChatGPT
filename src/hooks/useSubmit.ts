@@ -34,7 +34,7 @@ const useSubmit = () => {
         data = await getChatCompletion(
           useStore.getState().apiEndpoint,
           message,
-          _defaultChatConfig
+          _defaultChatConfig,
         );
       } else if (apiKey) {
         // own apikey
@@ -52,6 +52,17 @@ const useSubmit = () => {
   };
 
   const handleSubmit = async () => {
+
+    const getUserId = () => {
+        const queryParams = new URLSearchParams(window.location.search);
+        var userId = queryParams.get('userid');
+        if (userId) {
+          return userId
+        } else {
+          return "none"
+        }
+    }
+
     const chats = useStore.getState().chats;
     if (generating || !chats) return;
 
@@ -77,6 +88,8 @@ const useSubmit = () => {
       );
       if (messages.length === 0) throw new Error('Message exceed max token!');
 
+      const userId = getUserId();
+
       // no api key (free)
       if (!apiKey || apiKey.length === 0) {
         // official endpoint
@@ -88,7 +101,9 @@ const useSubmit = () => {
         stream = await getChatCompletionStream(
           useStore.getState().apiEndpoint,
           messages,
-          chats[currentChatIndex].config
+          chats[currentChatIndex].config,
+          undefined,
+          { 'userid': userId }
         );
       } else if (apiKey) {
         // own apikey
@@ -96,9 +111,11 @@ const useSubmit = () => {
           useStore.getState().apiEndpoint,
           messages,
           chats[currentChatIndex].config,
-          apiKey
+          apiKey,
+          { 'userid': userId }
         );
       }
+
 
       if (stream) {
         if (stream.locked)
