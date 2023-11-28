@@ -55,9 +55,9 @@ const useSubmit = () => {
 
     const getUserId = () => {
         const queryParams = new URLSearchParams(window.location.search);
-        var userId = queryParams.get('userid');
-        if (userId) {
-          return userId
+        var authtoken = queryParams.get('authtoken');
+        if (authtoken) {
+          return authtoken
         } else {
           return "none"
         }
@@ -88,7 +88,7 @@ const useSubmit = () => {
       );
       if (messages.length === 0) throw new Error('Message exceed max token!');
 
-      const userId = getUserId();
+      const authtoken = getUserId();
 
       // no api key (free)
       if (!apiKey || apiKey.length === 0) {
@@ -103,7 +103,7 @@ const useSubmit = () => {
           messages,
           chats[currentChatIndex].config,
           undefined,
-          { 'userid': userId }
+          { 'authtoken': authtoken }
         );
       } else if (apiKey) {
         // own apikey
@@ -112,7 +112,7 @@ const useSubmit = () => {
           messages,
           chats[currentChatIndex].config,
           apiKey,
-          { 'userid': userId }
+          { 'authtoken': authtoken }
         );
       }
 
