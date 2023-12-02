@@ -53,14 +53,14 @@ const useSubmit = () => {
 
   const handleSubmit = async () => {
 
-    const getUserId = () => {
-        const queryParams = new URLSearchParams(window.location.search);
-        var authtoken = queryParams.get('authtoken');
-        if (authtoken) {
-          return authtoken
-        } else {
-          return "none"
-        }
+    const getAuthToken = () => {
+      const queryParams = new URLSearchParams(window.location.search);
+      var authkey = queryParams.get('authkey');
+      var userid = queryParams.get('userid');
+      return {
+        'authkey': authkey ? authkey : "none",
+        'userid': userid ? userid : "none"
+      };
     }
 
     const chats = useStore.getState().chats;
@@ -88,7 +88,7 @@ const useSubmit = () => {
       );
       if (messages.length === 0) throw new Error('Message exceed max token!');
 
-      const authtoken = getUserId();
+      const authtoken = getAuthToken();
 
       // no api key (free)
       if (!apiKey || apiKey.length === 0) {
@@ -103,7 +103,7 @@ const useSubmit = () => {
           messages,
           chats[currentChatIndex].config,
           undefined,
-          { 'authtoken': authtoken }
+          { 'authkey': authtoken.authkey, 'userid': authtoken.userid }
         );
       } else if (apiKey) {
         // own apikey
@@ -112,7 +112,7 @@ const useSubmit = () => {
           messages,
           chats[currentChatIndex].config,
           apiKey,
-          { 'authtoken': authtoken }
+          { 'authkey': authtoken.authkey, 'userid': authtoken.userid }
         );
       }
 
